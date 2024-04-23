@@ -72,7 +72,8 @@ app.get('/backend-api/conversations', async (req, res) => {
             method: req.method,
             url: UPSTREAM_URL + req.url,
             headers: req.headers,
-            data: req.body
+            data: req.body,
+            responseType: 'stream'
         });
         res.status(response.status);
         res.set(response.headers);
