@@ -113,6 +113,26 @@ app.get('/backend-api/conversation/:id', async (req, res) => {
     }
 });
 
+// 修改标题接口
+app.get('/backend-api/conversation/gen_title/:id', async (req, res) => {
+    try {
+        const response = await axios({
+            method: req.method,
+            url: UPSTREAM_URL + req.url,
+            headers: req.headers,
+            data: req.body,
+            responseType: 'stream'
+        });
+        res.status(response.status);
+        res.set(response.headers);
+        response.data.pipe(res);
+    } 
+    catch (error) 
+    {
+        res.status(429).json({ detail: error.message });
+    }
+});
+
 // 启动服务器
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
