@@ -11,7 +11,7 @@ app.use(express.text());
 app.post('/backend-api/conversation', async (req, res) => {
     try {
 
-        console.log(req.method, req.url, req.headers, req.body);
+        console.log(req.method, req.url);
 
         const response = await axios({
             method: req.method,
@@ -54,7 +54,9 @@ app.post('/backend-api/conversation', async (req, res) => {
     catch (error) 
     {
         console.error('Error forwarding request:', error);
-        res.status(500).send('Error forwarding request');
+
+        // 返回json格式的错误信息
+        res.status(429).json({ error: error.message });
     }
 });
 
