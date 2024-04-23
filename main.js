@@ -28,11 +28,10 @@ app.post('/backend-api/conversation', async (req, res) => {
         res.status(response.status);
         res.set(response.headers);
 
-        console.log('Content-Type:', response.headers['content-type']);
-
-        // 处理不同类型的响应
+        // 处理响应数据
         if (response.headers['content-type'].includes('application/json')) 
         {
+            // 处理json响应
             let jsonData = '';
             response.data.on('data', (chunk) => { jsonData += chunk; });
             response.data.on('end', () => {
@@ -41,26 +40,34 @@ app.post('/backend-api/conversation', async (req, res) => {
         } 
         else if (response.headers['content-type'].includes('text/event-stream')) 
         {
+            // 处理sse响应
             response.data.on('data', chunk => {
                 console.log(`Received chunk: ${chunk}`);
                 res.write(chunk);
             });
 
+            // 响应结束后关闭连接
             response.data.on('end', () => {
-                console.log('End of stream');
                 res.end();
             });
         } 
         else 
         {
+            // 处理其他响应
             response.data.pipe(res);
         }
     } 
     catch (error) 
     {
-        // 返回json格式的错误信息
         res.status(429).json({ detail: error.message });
     }
+});
+
+// 获取历史记录
+app.get('/backend-api/conversations', (req, res) => {
+    const { offset, limit, order } = req.query;
+
+    res.status(429).json({ detail: UPSTREAM_URL + req.url });
 });
 
 app.listen(PORT, () => {
