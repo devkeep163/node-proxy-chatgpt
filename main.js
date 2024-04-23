@@ -64,10 +64,35 @@ app.post('/backend-api/conversation', async (req, res) => {
 });
 
 // 获取历史记录
-app.get('/backend-api/conversations', (req, res) => {
+app.get('/backend-api/conversations', async (req, res) => {
     const { offset, limit, order } = req.query;
 
-    res.status(429).json({ detail: UPSTREAM_URL + req.url });
+    try {
+        const response = await axios({
+            method: req.method,
+            url: UPSTREAM_URL + req.url,
+            headers: req.headers,
+            data: req.body
+        });
+        res.status(response.status);
+        res.set(response.headers);
+        response.data.pipe(res);
+        
+        // if (response.headers['content-type'].includes('application/json')) {
+        //     let jsonData = '';
+        //     response.data.on('data', (chunk) => { jsonData += chunk; });
+        //     response.data.on('end', () => {
+        //         res.send(jsonData);
+        //     });
+        // } 
+        // else 
+        // {
+        //     response.data.pipe(res);
+        // } 
+
+    } catch (error) {
+        res.status(429).json({ detail: error.message });
+    }
 });
 
 app.listen(PORT, () => {
