@@ -11,8 +11,8 @@ app.use(express.text());
 app.post('/backend-api/conversation', async (req, res) => {
     try {
 
-        res.status(429).json({ detail: '测试' });
-        return;
+        // res.status(429).json({ detail: '测试' });
+        // return;
 
         console.log(UPSTREAM_URL + req.url);
 
