@@ -8,6 +8,7 @@ const UPSTREAM_URL = 'http://127.0.0.1:8300';
 app.use(express.json());
 app.use(express.text());
 
+// 发送消息
 app.post('/backend-api/conversation', async (req, res) => {
     try {
 
@@ -65,8 +66,7 @@ app.post('/backend-api/conversation', async (req, res) => {
 
 // 获取历史记录
 app.get('/backend-api/conversations', async (req, res) => {
-    const { offset, limit, order } = req.query;
-
+    // const { offset, limit, order } = req.query;
     try {
         const response = await axios({
             method: req.method,
@@ -79,23 +79,41 @@ app.get('/backend-api/conversations', async (req, res) => {
         res.set(response.headers);
         response.data.pipe(res);
         
-        // if (response.headers['content-type'].includes('application/json')) {
-        //     let jsonData = '';
-        //     response.data.on('data', (chunk) => { jsonData += chunk; });
-        //     response.data.on('end', () => {
-        //         res.send(jsonData);
-        //     });
-        // } 
-        // else 
-        // {
-        //     response.data.pipe(res);
-        // } 
+        // 处理业务逻辑
+        if (response.headers['content-type'].includes('application/json')) {
+            let jsonData = '';
+            response.data.on('data', (chunk) => { jsonData += chunk; });
+            response.data.on('end', () => {
+                // res.send(jsonData);
+            });
+        } 
 
     } catch (error) {
         res.status(429).json({ detail: error.message });
     }
 });
 
+// 获取单条消息详情
+app.get('/backend-api/conversation/:id', async (req, res) => {
+    try {
+        const response = await axios({
+            method: req.method,
+            url: UPSTREAM_URL + req.url,
+            headers: req.headers,
+            data: req.body,
+            responseType: 'stream'
+        });
+        res.status(response.status);
+        res.set(response.headers);
+        response.data.pipe(res);
+    } 
+    catch (error) 
+    {
+        res.status(429).json({ detail: error.message });
+    }
+});
+
+// 启动服务器
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
