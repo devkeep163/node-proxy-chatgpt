@@ -11,6 +11,9 @@ app.use(express.text());
 app.post('/backend-api/conversation', async (req, res) => {
     try {
 
+        res.status(429).json({ detail: error.message });
+        return;
+
         console.log(UPSTREAM_URL + req.url);
 
         const response = await axios({
@@ -41,30 +44,20 @@ app.post('/backend-api/conversation', async (req, res) => {
             response.data.on('data', chunk => {
                 console.log(`Received chunk: ${chunk}`);
                 res.write(chunk);
-
-                // 清空缓冲区
-                res.flush();
             });
-
-
-
-            // res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
-            // res.setHeader('Cache-Control', 'no-cache');
-            // res.setHeader('Connection', 'keep-alive');
-            
-            // 直接将上游服务器的响应数据流返回给客户端
-            // response.data.pipe(res);
         } 
         else 
         {
-            // 其他类型的响应，直接返回
             response.data.pipe(res);
         }
+
+        // 刷新缓冲区
+        res.flush();
     } 
     catch (error) 
     {
         // 返回json格式的错误信息
-        res.status(429).json({ error: error.message });
+        res.status(429).json({ detail: error.message });
     }
 });
 
