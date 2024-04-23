@@ -3,15 +3,13 @@ const axios = require('axios');
 
 const app = express();
 const PORT = 3000;
-const UPSTREAM_URL = 'http://127.0.0.1:8300/backend-api/conversation';
+const UPSTREAM_URL = 'http://127.0.0.1:8300';
 
 app.use(express.json());
 app.use(express.text());
 
 app.post('/backend-api/conversation', async (req, res) => {
     try {
-
-        console.log(req.method, req.url);
 
         const response = await axios({
             method: req.method,
