@@ -45,14 +45,17 @@ app.post('/backend-api/conversation', async (req, res) => {
                 console.log(`Received chunk: ${chunk}`);
                 res.write(chunk);
             });
+
+            response.data.on('end', () => {
+                console.log('End of stream');
+                res.end();
+                res.flush();
+            });
         } 
         else 
         {
             response.data.pipe(res);
         }
-
-        // 刷新缓冲区
-        res.flush();
     } 
     catch (error) 
     {
