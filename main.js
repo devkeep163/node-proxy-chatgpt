@@ -44,7 +44,6 @@ app.post('/backend-api/conversation', async (req, res) => {
             response.data.on('data', chunk => {
                 console.log(`Received chunk: ${chunk}`);
                 res.write(chunk);
-                res.flush();
             });
 
             response.data.on('end', () => {
