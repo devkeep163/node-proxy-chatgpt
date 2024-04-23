@@ -38,12 +38,19 @@ app.post('/backend-api/conversation', async (req, res) => {
         } 
         else if (response.headers['content-type'].includes('text/event-stream')) 
         {
+            response.data.on('data', chunk => {
+                console.log(`Received chunk: ${chunk}`);
+                res.write(chunk);
+            });
+
+
+
             // res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
             // res.setHeader('Cache-Control', 'no-cache');
             // res.setHeader('Connection', 'keep-alive');
             
             // 直接将上游服务器的响应数据流返回给客户端
-            response.data.pipe(res);
+            // response.data.pipe(res);
         } 
         else 
         {
