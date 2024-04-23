@@ -11,6 +11,8 @@ app.use(express.text());
 app.post('/backend-api/conversation', async (req, res) => {
     try {
 
+        console.log(UPSTREAM_URL + req.url);
+
         const response = await axios({
             method: req.method,
             url: UPSTREAM_URL + req.url,
