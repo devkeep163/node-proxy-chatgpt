@@ -114,7 +114,7 @@ app.get('/backend-api/conversation/:id', async (req, res) => {
 });
 
 // 修改标题接口
-app.get('/backend-api/conversation/gen_title/:id', async (req, res) => {
+app.post('/backend-api/conversation/gen_title/:id', async (req, res) => {
     try {
         const response = await axios({
             method: req.method,
