@@ -53,8 +53,6 @@ app.post('/backend-api/conversation', async (req, res) => {
     } 
     catch (error) 
     {
-        console.error('Error forwarding request:', error);
-
         // 返回json格式的错误信息
         res.status(429).json({ error: error.message });
     }
