@@ -119,7 +119,7 @@ app.post('/backend-api/conversation', async (req, res) => {
     }
 });
 
-// 获取历史记录
+// 获取历史会话记录
 app.get('/backend-api/conversations', async (req, res) => {
     // const { offset, limit, order } = req.query;
     try {
@@ -151,16 +151,53 @@ app.get('/backend-api/conversations', async (req, res) => {
 // 获取单条消息详情
 app.get('/backend-api/conversation/:id', async (req, res) => {
     try {
-        const response = await axios({
-            method: req.method,
-            url: UPSTREAM_URL + req.url,
-            headers: req.headers,
-            data: req.body,
-            responseType: 'stream'
+
+       // 获取会话id
+       const conversation_id = req.params.id;
+
+        // 根据会话id，然后查询数据库，如何数据库存在。则返回数据，否则返回上游数据并写入数据库
+        db.getRecord('chat_conversation_detail', { conversation_id: conversation_id }, async (err, result) => {
+            if (err) {
+                console.log(err);
+            }
+            if (result) {
+                console.log(result);
+                res.send(result.content);
+            } else {
+
+                // 不存在则查询上游数据并写入数据库
+                const response = await axios({
+                    method: req.method,
+                    url: UPSTREAM_URL + req.url,
+                    headers: req.headers,
+                    data: req.body,
+                    responseType: 'stream'
+                });
+                res.status(response.status);
+                res.set(response.headers);
+        
+                // 处理响应数据
+                let jsonData = '';
+                response.data.on('data', (chunk) => { jsonData += chunk; });
+                response.data.on('end', () => {
+                    res.send(jsonData);
+                });
+        
+                // 写入数据库
+                db.addRecord('chat_msg', {
+                    conversation_id: conversation_id,
+                    content: jsonData,
+                    createtime: Math.floor(Date.now() / 1000)
+                }, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(result);
+                });
+            }
         });
-        res.status(response.status);
-        res.set(response.headers);
-        response.data.pipe(res);
+
+        // response.data.pipe(res);
     } 
     catch (error) 
     {

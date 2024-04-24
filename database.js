@@ -22,20 +22,24 @@ function getAll(table, callback) {
 }
 
 // 通过ID获取记录
-function getById(table, id, callback) {
-    pool.query(`SELECT * FROM ${table} WHERE id = ?`, [id], (error, results) => {
-        callback(error, results[0]);
+function getRecord(table, conditions, callback) {
+    const keys = Object.keys(conditions);
+    const values = Object.values(conditions);
+
+    // 构建WHERE子句
+    const whereClause = keys.map(key => `${key} = ?`).join(' AND ');
+
+    const query = `SELECT * FROM ${table} WHERE ${whereClause}`;
+    pool.query(query, values, (error, results) => {
+        if (error) {
+            callback(error, null);
+            return;
+        }
+        callback(null, results[0]);
     });
 }
 
 // 添加记录
-// function addRecord(table, data, callback) {
-//     const keys = Object.keys(data);
-//     const values = Object.values(data);
-//     pool.query(`INSERT INTO ${table} (${keys.join(', ')}) VALUES (?)`, [values], (error, results) => {
-//         callback(error, results);
-//     });
-// }
 function addRecord(table, data, callback) {
     const keys = Object.keys(data);
     const values = Object.values(data);
@@ -71,7 +75,7 @@ function deleteRecord(table, id, callback) {
 
 module.exports = {
     getAll,
-    getById,
+    getRecord,
     addRecord,
     updateRecord,
     deleteRecord
