@@ -60,7 +60,7 @@ app.post('/backend-api/conversation', async (req, res) => {
                 // 解析数据，如果以data: 开头，则截取其中的消息内容并转换成json格式
                 const data = chunk.toString();
                 if (data.startsWith('data:')) {
-                    const msg = data.slice(6);
+                    const msg = (data.slice(5)).trim();
                     const jsonMsg = JSON.parse(msg);
 
                     if(jsonMsg.conversation_id) {
