@@ -66,8 +66,8 @@ app.post('/backend-api/conversation', async (req, res) => {
                     if(jsonMsg.conversation_id) {
                         conversation_id = jsonMsg.conversation_id;
                     }
-                    if(jsonMsg.msg_id) {
-                        msg_id = jsonMsg.msg_id;
+                    if(jsonMsg.message.id) {
+                        msg_id = jsonMsg.message.id;
                     }
                 }
             });
