@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 
 // 创建数据库连接池
 const pool = mysql.createPool({
-    host: 'localhost',
+    host: '127.0.0.1',
     user: 'chatgpt',
     password: '123456',
     database: 'chatgpt',
