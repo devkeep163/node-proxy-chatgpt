@@ -93,14 +93,14 @@ app.post('/backend-api/conversation', async (req, res) => {
                 db.addRecord('chat_msg', {
                     conversation_id: conversation_id,
                     msg_id: msg_id,
-                    body: body, 
+                    body: 'body', 
                     result: filePath,
                     createtime: Math.floor(Date.now() / 1000)
                 }, (err, result) => {
                     // if (err) {
                     //     console.log(err);
                     // }
-                    console.log(result);
+                    // console.log(result);
                 });
 
                 res.end();
