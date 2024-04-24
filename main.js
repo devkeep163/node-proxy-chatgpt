@@ -87,7 +87,10 @@ app.post('/backend-api/conversation', async (req, res) => {
             response.data.on('end', () => {
 
                 let body = JSON.stringify(req.body);
-                console.log(body);
+                // console.log(body);
+
+                // 删除会话内容
+                db.deleteRecord('chat_conversation_detail', conversation_id, (err, result) => {});
 
                 // 写入数据库
                 db.addRecord('chat_msg', {

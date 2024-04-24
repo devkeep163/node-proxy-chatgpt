@@ -68,7 +68,7 @@ function updateRecord(table, id, data, callback) {
 
 // 删除记录
 function deleteRecord(table, id, callback) {
-    pool.query(`DELETE FROM ${table} WHERE id = ?`, [id], (error, results) => {
+    pool.query(`DELETE FROM ${table} WHERE conversation_id = ?`, [id], (error, results) => {
         callback(error, results.affectedRows);
     });
 }
