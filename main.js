@@ -25,6 +25,8 @@ app.post('/backend-api/conversation', async (req, res) => {
             responseType: 'stream'
         });
 
+        console.log(req.body);
+
         // 设置状态码和响应头
         res.status(response.status);
         res.set(response.headers);
