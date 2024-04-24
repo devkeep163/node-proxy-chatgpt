@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const { appendToFile } = require('./fileWriter');
 const path = require('path');
+const db = require('./database');
 
 const app = express();
 const PORT = 3000;
@@ -45,19 +46,50 @@ app.post('/backend-api/conversation', async (req, res) => {
         {
             const fileName = Date.now() + '.txt';
             const filePath = path.join(__dirname, 'msg', fileName);
-
-            console.log('File path:', filePath);
+            let msg_id = 0;
+            let conversation_id = 0;
 
             // 处理sse响应
             response.data.on('data', chunk => {
-                console.log(`Received chunk: ${chunk}`);
+                // console.log(`Received chunk: ${chunk}`);
                 res.write(chunk);
+
                 // 把数据写入文件
                 appendToFile(chunk, filePath);
+
+                // 解析数据，如果以data: 开头，则截取其中的消息内容并转换成json格式
+                const data = chunk.toString();
+                if (data.startsWith('data:')) {
+                    const msg = data.slice(6);
+                    const jsonMsg = JSON.parse(msg);
+
+                    if(jsonMsg.conversation_id) {
+                        conversation_id = jsonMsg.conversation_id;
+                    }
+                    if(jsonMsg.msg_id) {
+                        msg_id = jsonMsg.msg_id;
+                    }
+                }
             });
 
             // 响应结束后关闭连接
             response.data.on('end', () => {
+
+                // 写入数据库
+                db.addRecord('chat_msg', {
+                    conversation_id: conversation_id,
+                    msg_id: msg_id,
+                    body: body, 
+                    result: filePath,
+                    createtime: Math.floor(Date.now() / 1000)
+                }, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+
+                    console.log(result);
+                });
+
                 res.end();
             });
         } 
