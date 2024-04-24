@@ -182,7 +182,7 @@ app.get('/backend-api/conversation/:id', async (req, res) => {
                 response.data.on('end', () => {
 
                     // 写入数据库
-                    db.addRecord('chat_msg', {
+                    db.addRecord('chat_conversation_detail', {
                         conversation_id: conversation_id,
                         content: jsonData,
                         createtime: Math.floor(Date.now() / 1000)
