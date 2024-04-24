@@ -46,6 +46,8 @@ app.post('/backend-api/conversation', async (req, res) => {
             const fileName = Date.now() + '.txt';
             const filePath = path.join(__dirname, 'msg', fileName);
 
+            console.log('File path:', filePath);
+
             // 处理sse响应
             response.data.on('data', chunk => {
                 console.log(`Received chunk: ${chunk}`);

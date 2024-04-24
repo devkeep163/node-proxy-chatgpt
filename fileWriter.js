@@ -12,7 +12,7 @@ async function appendToFile(data, filePath) {
         });
 
         // 追加数据到文件，并在每次写入后加入换行符
-        await fs.appendFile(filePath, data + '\n');
+        await fs.appendFile(filePath, data);
         console.log('Data appended successfully');
     } catch (err) {
         console.error('Error writing to file:', err);
