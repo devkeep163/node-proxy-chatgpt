@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const mysql = require('mysql2');
 const db = require('./database');
-const { appendToFile } = require('./fileWriter');
+// const { appendToFile } = require('./fileWriter');
 
 const app = express();
 const PORT = 3000;
