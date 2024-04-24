@@ -11,6 +11,15 @@ const UPSTREAM_URL = 'http://127.0.0.1:8300';
 app.use(express.json());
 app.use(express.text());
 
+function isValidJson(str) {
+    try {
+        JSON.parse(str);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
 // 发送消息
 app.post('/backend-api/conversation', async (req, res) => {
     try {
@@ -46,8 +55,8 @@ app.post('/backend-api/conversation', async (req, res) => {
         {
             const fileName = Date.now() + '.txt';
             const filePath = path.join(__dirname, 'msg', fileName);
-            let msg_id = 0;
-            let conversation_id = 0;
+            let msg_id = '';
+            let conversation_id = '';
 
             // 处理sse响应
             response.data.on('data', chunk => {
@@ -61,14 +70,15 @@ app.post('/backend-api/conversation', async (req, res) => {
                 const data = chunk.toString();
                 if (data.startsWith('data:')) {
                     const msg = (data.slice(5)).trim();
-                    console.log(msg);
-                    const jsonMsg = JSON.parse(msg);
-
-                    if(jsonMsg.conversation_id) {
-                        conversation_id = jsonMsg.conversation_id;
-                    }
-                    if(jsonMsg.message.id) {
-                        msg_id = jsonMsg.message.id;
+                    if(isValidJson(msg))
+                    {
+                        const jsonMsg = JSON.parse(msg);
+                        if(jsonMsg.conversation_id && !conversation_id) {
+                            conversation_id = jsonMsg.conversation_id;
+                        }
+                        if(jsonMsg.message.id && !msg_id) {
+                            msg_id = jsonMsg.message.id;
+                        }
                     }
                 }
             });
