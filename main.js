@@ -61,6 +61,7 @@ app.post('/backend-api/conversation', async (req, res) => {
                 const data = chunk.toString();
                 if (data.startsWith('data:')) {
                     const msg = (data.slice(5)).trim();
+                    console.log(msg);
                     const jsonMsg = JSON.parse(msg);
 
                     if(jsonMsg.conversation_id) {
@@ -101,7 +102,8 @@ app.post('/backend-api/conversation', async (req, res) => {
     } 
     catch (error) 
     {
-        res.status(429).json({ detail: error.message });
+        console.log(error);
+        // res.status(429).json({ detail: error.message });
     }
 });
 
