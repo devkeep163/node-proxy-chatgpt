@@ -1,5 +1,7 @@
 const express = require('express');
 const axios = require('axios');
+const { appendToFile } = require('./fileWriter');
+const path = require('path');
 
 const app = express();
 const PORT = 3000;
@@ -41,10 +43,15 @@ app.post('/backend-api/conversation', async (req, res) => {
         } 
         else if (response.headers['content-type'].includes('text/event-stream')) 
         {
+            const fileName = Date.now() + '.txt';
+            const filePath = path.join(__dirname, 'msg', fileName);
+
             // 处理sse响应
             response.data.on('data', chunk => {
                 console.log(`Received chunk: ${chunk}`);
                 res.write(chunk);
+                // 把数据写入文件
+                appendToFile(chunk, filePath);
             });
 
             // 响应结束后关闭连接
