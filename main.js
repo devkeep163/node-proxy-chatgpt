@@ -34,6 +34,8 @@ app.post('/backend-api/conversation', async (req, res) => {
         res.status(response.status);
         res.set(response.headers);
 
+        console.log(response.headers['content-type']);
+
         // 处理响应数据
         if (response.headers['content-type'].includes('application/json')) 
         {
