@@ -29,11 +29,26 @@ function getById(table, id, callback) {
 }
 
 // 添加记录
+// function addRecord(table, data, callback) {
+//     const keys = Object.keys(data);
+//     const values = Object.values(data);
+//     pool.query(`INSERT INTO ${table} (${keys.join(', ')}) VALUES (?)`, [values], (error, results) => {
+//         callback(error, results);
+//     });
+// }
 function addRecord(table, data, callback) {
     const keys = Object.keys(data);
     const values = Object.values(data);
-    pool.query(`INSERT INTO ${table} (${keys.join(', ')}) VALUES (?)`, [values], (error, results) => {
-        callback(error, results.insertId);
+    const placeholders = keys.map(() => '?').join(', ');  // 为每个值创建一个占位符
+
+    const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${placeholders})`;
+    pool.query(query, values, (error, results) => {
+        if (error) {
+            console.error('Error executing query:', error);
+            callback(error, null);  // 传递错误给回调函数
+            return;
+        }
+        callback(null, results);
     });
 }
 
