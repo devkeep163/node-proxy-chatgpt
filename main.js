@@ -63,15 +63,15 @@ app.post('/backend-api/conversation', async (req, res) => {
             response.data.on('end', () => {
 
                 // 写入数据库
-                db.addRecord('chat_msg', {
-                    body: body, 
-                    result: filePath,
-                    createtime: Math.floor(Date.now() / 1000)
-                }, (err, result) => {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
+                // db.addRecord('chat_msg', {
+                //     body: body, 
+                //     result: filePath,
+                //     createtime: Math.floor(Date.now() / 1000)
+                // }, (err, result) => {
+                //     if (err) {
+                //         console.log(err);
+                //     }
+                // });
 
                 res.end();
             });
