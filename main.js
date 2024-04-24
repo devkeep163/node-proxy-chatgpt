@@ -52,7 +52,7 @@ app.post('/backend-api/conversation', async (req, res) => {
             const fileName = Date.now() + '.txt';
             const filePath = path.join(__dirname, 'msg', fileName);
 
-            logger.info(`Writing file to ${filePath}`);
+            console.log('File path:', filePath);
 
             // 处理sse响应
             response.data.on('data', chunk => {
@@ -60,7 +60,7 @@ app.post('/backend-api/conversation', async (req, res) => {
                 res.write(chunk);
 
                 // 把数据写入文件
-                appendToFile(chunk, filePath);
+                // appendToFile(chunk, filePath);
             });
 
             // 响应结束后关闭连接
