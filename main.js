@@ -180,19 +180,21 @@ app.get('/backend-api/conversation/:id', async (req, res) => {
                 let jsonData = '';
                 response.data.on('data', (chunk) => { jsonData += chunk; });
                 response.data.on('end', () => {
+
+                    // 写入数据库
+                    db.addRecord('chat_msg', {
+                        conversation_id: conversation_id,
+                        content: jsonData,
+                        createtime: Math.floor(Date.now() / 1000)
+                    }, (err, result) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        console.log(result);
+                    });
+
+                    // 响应数据
                     res.send(jsonData);
-                });
-        
-                // 写入数据库
-                db.addRecord('chat_msg', {
-                    conversation_id: conversation_id,
-                    content: jsonData,
-                    createtime: Math.floor(Date.now() / 1000)
-                }, (err, result) => {
-                    if (err) {
-                        console.log(err);
-                    }
-                    console.log(result);
                 });
             }
         });
