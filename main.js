@@ -86,11 +86,14 @@ app.post('/backend-api/conversation', async (req, res) => {
             // 响应结束后关闭连接
             response.data.on('end', () => {
 
+                let body = JSON.stringify(req.body);
+                console.log(body);
+
                 // 写入数据库
                 db.addRecord('chat_msg', {
                     conversation_id: conversation_id,
                     msg_id: msg_id,
-                    body: json.stringify(req.body), 
+                    body: body, 
                     result: filePath,
                     createtime: Math.floor(Date.now() / 1000)
                 }, (err, result) => {
