@@ -97,9 +97,9 @@ app.post('/backend-api/conversation', async (req, res) => {
                     result: filePath,
                     createtime: Math.floor(Date.now() / 1000)
                 }, (err, result) => {
-                    if (err) {
-                        console.log(err);
-                    }
+                    // if (err) {
+                    //     console.log(err);
+                    // }
                     console.log(result);
                 });
 
