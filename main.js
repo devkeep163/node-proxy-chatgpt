@@ -67,6 +67,10 @@ app.post('/backend-api/conversation', async (req, res) => {
                     body: body, 
                     result: filePath,
                     createtime: Math.floor(Date.now() / 1000)
+                }, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
                 });
 
                 res.end();
