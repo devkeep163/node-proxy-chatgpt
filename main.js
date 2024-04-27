@@ -41,11 +41,12 @@ app.post('/backend-api/conversation', async (req, res) => {
         res.status(response.status);
         res.set(response.headers);
 
+        // 处理json响应
+        let jsonData = '';
+
         // 处理响应数据
         if (response.headers['content-type'].includes('application/json')) 
         {
-            // 处理json响应
-            let jsonData = '';
             response.data.on('data', (chunk) => { jsonData += chunk; });
             response.data.on('end', () => {
                 res.send(jsonData);
@@ -62,25 +63,26 @@ app.post('/backend-api/conversation', async (req, res) => {
             response.data.on('data', chunk => {
                 // console.log(`Received chunk: ${chunk}`);
                 res.write(chunk);
+                jsonData += chunk;
 
-                // 把数据写入文件
-                appendToFile(chunk, filePath);
+                // 把数据写入文件(此处换成写入数据库)
+                // appendToFile(chunk, filePath);
 
-                // 解析数据，如果以data: 开头，则截取其中的消息内容并转换成json格式
-                const data = chunk.toString();
-                if (data.startsWith('data:')) {
-                    const msg = (data.slice(5)).trim();
-                    if(isValidJson(msg))
-                    {
-                        const jsonMsg = JSON.parse(msg);
-                        if(jsonMsg.conversation_id && !conversation_id) {
-                            conversation_id = jsonMsg.conversation_id;
-                        }
-                        if(jsonMsg.message.id && !msg_id) {
-                            msg_id = jsonMsg.message.id;
-                        }
-                    }
-                }
+                // // 解析数据，如果以data: 开头，则截取其中的消息内容并转换成json格式
+                // const data = chunk.toString();
+                // if (data.startsWith('data:')) {
+                //     const msg = (data.slice(5)).trim();
+                //     if(isValidJson(msg))
+                //     {
+                //         const jsonMsg = JSON.parse(msg);
+                //         if(jsonMsg.conversation_id && !conversation_id) {
+                //             conversation_id = jsonMsg.conversation_id;
+                //         }
+                //         if(jsonMsg.message.id && !msg_id) {
+                //             msg_id = jsonMsg.message.id;
+                //         }
+                //     }
+                // }
             });
 
             // 响应结束后关闭连接
@@ -97,7 +99,7 @@ app.post('/backend-api/conversation', async (req, res) => {
                     conversation_id: conversation_id,
                     msg_id: msg_id,
                     body: body, 
-                    result: filePath,
+                    result: jsonData,
                     createtime: Math.floor(Date.now() / 1000)
                 }, (err, result) => {
                     if (err) {
