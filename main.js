@@ -232,6 +232,25 @@ app.post('/backend-api/conversation/gen_title/:id', async (req, res) => {
     }
 });
 
+// 查询chatgpt模型接口
+app.post('/backend-api/models', async (req, res) => {
+    try {
+        const response = await axios({
+            method: 'get',
+            url: 'https://free.18230.work/chatgpt/backend-api/models',
+            headers: {
+                'Authorization': 'Bearer ' + req.headers.token
+            }
+        });
+        res.status(200);
+        response.data.pipe(res);
+    } 
+    catch (error) 
+    {
+        res.status(200).json({ detail: error.message });
+    }
+});
+
 // 启动服务器
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
